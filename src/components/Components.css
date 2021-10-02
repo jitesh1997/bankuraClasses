@@ -26,7 +26,7 @@
     height: 100vh;
 }
 
-input[type=text], input[type=submit], input[type=email], input[type=password]  {
+.inputField {
     background-color: #f6f6f6;
     border-radius: 10px;
     color: #0d0d0d;
@@ -39,41 +39,60 @@ input[type=text], input[type=submit], input[type=email], input[type=password]  {
     border: 2px solid #f6f6f6;
 }
 
-input[type=submit] {
-    background-color: lightskyblue;
-    border: lightskyblue;
-    cursor: pointer;
-    margin-left: 25%;
-    margin-top: 30px;
-}
-
-input[type=submit]:hover {
-    background-color: skyblue;
+.errorField {
+    background-color: #fce4e4;
+    border: 1px solid #cc0033;
+    outline: none;
   }
+
+.error-message {
+    color: #cc0033;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 15px;
+    margin: -10px 0px 10px 50px;
+  }
+.submitButton {
+    margin: 10px 0px 40px 90px;
+}
 
 .footerDiv {
     background-color: #f6f6f6;
     height: 50px;
 }
-.headerButton {
-    border-radius: 10px;
-    color: white;
-    padding: 10px 32px;
+.btn {
+    display: inline-block;
+    font-weight: 400;
     text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 10px 32px;
     font-size: 16px;
-    background-color: rgb(13, 40, 51);
+    line-height: 1.42857143;
+    border-radius: 10px;
+}
+.btn-primary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+.btn-primary:hover {
+    background-color: rgb(36, 125, 160);
+}
+.btn-success {
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+.headerButton {
     position: absolute;
     top: 10px;
     right: 10px;
 }
 
 .logoutButton {
-    border-radius: 10px;
-    color: white;
-    padding: 10px 32px;
-    text-align: center;
-    font-size: 16px;
-    background-color: rgb(13, 40, 51);
     position: absolute;
     top: 20px;
     right: 10px;

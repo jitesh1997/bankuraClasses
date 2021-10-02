@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import Button from './common/Button';
 import Login from './Login';
 import SignUp from './SignUp';
-import './StartPage.css';
+import './Components.css';
 
 
 class StartPage extends Component {
@@ -22,8 +23,8 @@ class StartPage extends Component {
     render() {
         return <div className="outerDiv">
             <div>
-                {!this.state.login && <button className={'headerButton'} onClick={this.handleLogin}>Login</button>}
-                {this.state.login && <button className={'headerButton'} onClick={this.handleSignup}>Signup</button>}
+                {!this.state.login && <Button type ={'primary'} customButtonClass={'headerButton'} onClick={this.handleLogin} title={'Login'}/>}
+                {this.state.login && <Button type ={'primary'} customButtonClass={'headerButton'} onClick={this.handleSignup} title={'Sign Up'}/>}
             </div>
             <div className="mainWrapper">
                 {this.state.login ? <Login /> : <SignUp />}
