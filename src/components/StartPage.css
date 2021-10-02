@@ -1,0 +1,80 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 300px;
+}
+.mainWrapper {
+    width: 400px;
+    height: fit-content;
+    background-color: #ffffff;
+    border-radius: 10px 10px 10px 10px;
+    border: 5px solid #f6f6f6;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    overflow: hidden;
+}
+.outerDiv {
+    background-color: skyblue;
+    height: 100vh;
+}
+.welcomeDiv {
+    background-color:green;
+    height: 100vh;
+}
+
+input[type=text], input[type=submit], input[type=email], input[type=password]  {
+    background-color: #f6f6f6;
+    border-radius: 10px;
+    color: #0d0d0d;
+    padding: 15px 32px;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+    margin-left: 12%;
+    width: 85%;
+    border: 2px solid #f6f6f6;
+}
+
+input[type=submit] {
+    background-color: lightskyblue;
+    border: lightskyblue;
+    cursor: pointer;
+    margin-left: 25%;
+    margin-top: 30px;
+}
+
+input[type=submit]:hover {
+    background-color: skyblue;
+  }
+
+.footerDiv {
+    background-color: #f6f6f6;
+    height: 50px;
+}
+.headerButton {
+    border-radius: 10px;
+    color: white;
+    padding: 10px 32px;
+    text-align: center;
+    font-size: 16px;
+    background-color: rgb(13, 40, 51);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.logoutButton {
+    border-radius: 10px;
+    color: white;
+    padding: 10px 32px;
+    text-align: center;
+    font-size: 16px;
+    background-color: rgb(13, 40, 51);
+    position: absolute;
+    top: 20px;
+    right: 10px;
+}
