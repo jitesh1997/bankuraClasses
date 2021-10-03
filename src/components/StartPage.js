@@ -10,9 +10,6 @@ class StartPage extends Component {
         super(props);
         this.state = { login: true }
     }
-    handleSubmit = () => {
-        alert('Form Submitted Successfully');
-    }
     handleSignup = () => {
         this.setState({ login: false });
     }

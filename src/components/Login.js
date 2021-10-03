@@ -10,30 +10,23 @@ const Login = () => {
     const history = useHistory();
     const [passError, setPassError] = useState('');
     const [mailError, setMailError] = useState('');
-    let count = 0;
+    const [submitError, setSubmitError] = useState('');
     const fieldValidator = () => {
         if (!mail) {
             setMailError('This Input Field is required')
-            count++;
+            return false;
         } else {
             const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
             if (!pattern.test(mail)) {
                 setMailError('Invalid Email Address');
-                count++;
+                return false;
             }
         }
         if (!password) {
             setPassError('This Input Field is required');
-            count++;
+            return false;
 
-        } else {
-            const pattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
-            if (!pattern.test(password)) {
-                setPassError('One numeric and special char required');
-                count++;
-            }
         }
-        if (count !== 0) return false;
         return true;
     }
     const handleLogin = () => {
@@ -46,8 +39,8 @@ const Login = () => {
                     console.log('User successfully loggedIn');
                     localStorage.setItem('currentUser', JSON.stringify(cred));
                     history.push("/home");
-                } else alert('Incorrect Password');
-            } else alert('User not registered please signup');
+                } else setSubmitError('Incorrect Password');
+            } else setSubmitError('User not registered please signup');
         }
     };
     return <div className="formWrapper">
@@ -60,7 +53,7 @@ const Login = () => {
                     title="Email"
                     value={mail}
                     customButtonClass={'inputField'}
-                    setOnChange={e => setMail(e.target.value)}
+                    setOnChange={e => {return setMail(e.target.value)}}
                     setOnClick={() => setMailError('')}
                     required={true}
                     errMsg={mailError}
@@ -80,6 +73,7 @@ const Login = () => {
                     onClick={handleLogin}
                     title={'Login'}
                 />
+                {submitError && <div className="error-message">{submitError}</div>}
             </div>
         </div>
     </div>
