@@ -5,24 +5,26 @@ import Button from './common/Button';
 import Input from './common/Input';
 
 const Login = () => {
-    const [mail, setMail] = useState('');
-    const [password, setPassword] = useState('');
     const history = useHistory();
     const [passError, setPassError] = useState('');
     const [mailError, setMailError] = useState('');
     const [submitError, setSubmitError] = useState('');
+    const [fieldObj, setFieldObj] = useState({
+        mail: '',
+        password: '',
+    });
     const fieldValidator = () => {
-        if (!mail) {
+        if (!fieldObj.mail) {
             setMailError('This Input Field is required')
             return false;
         } else {
             const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-            if (!pattern.test(mail)) {
+            if (!pattern.test(fieldObj.mail)) {
                 setMailError('Invalid Email Address');
                 return false;
             }
         }
-        if (!password) {
+        if (!fieldObj.password) {
             setPassError('This Input Field is required');
             return false;
 
@@ -33,9 +35,9 @@ const Login = () => {
         const validValue = fieldValidator();
         console.log('validValue', validValue);
         if (validValue) {
-            const cred = JSON.parse(localStorage.getItem('credentials')).find(o => o.email === mail)
+            const cred = JSON.parse(localStorage.getItem('credentials')).find(o => o.mail === fieldObj.mail)
             if (cred) {
-                if (cred.password === password) {
+                if (cred.password === fieldObj.password) {
                     console.log('User successfully loggedIn');
                     localStorage.setItem('currentUser', JSON.stringify(cred));
                     history.push("/home");
@@ -51,9 +53,9 @@ const Login = () => {
                     type="email"
                     name="mail"
                     title="Email"
-                    value={mail}
+                    value={fieldObj.mail}
                     customButtonClass={'inputField'}
-                    setOnChange={e => {return setMail(e.target.value)}}
+                    setOnChange={e => setFieldObj({...fieldObj, mail: e.target.value})}
                     setOnClick={() => setMailError('')}
                     required={true}
                     errMsg={mailError}
@@ -62,9 +64,9 @@ const Login = () => {
                     type="password"
                     name="password"
                     title="Password"
-                    value={password}
+                    value={fieldObj.password}
                     customButtonClass={'inputField'}
-                    setOnChange={e => setPassword(e.target.value)}
+                    setOnChange={e => setFieldObj({...fieldObj, password: e.target.value})}
                     setOnClick={() => setPassError('')}
                     required={true}
                     errMsg={passError} />

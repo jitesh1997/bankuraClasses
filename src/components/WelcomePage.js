@@ -13,8 +13,8 @@ const WelcomePage = () => {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     return <div className="welcomeDiv">
         <div>
-            <Button type ={'primary'} customButtonClass={'logoutButton'} onClick={handleLogout} title={user?.Username ? 'Logout': 'Login/SignUp'}/>
-            <h3> {user?.Username ? `Hi ${user.Username}` : 'Unauthorized User' }</h3>
+            <Button type ={'primary'} customButtonClass={'logoutButton'} onClick={handleLogout} title={user?.username ? 'Logout': 'Login/SignUp'}/>
+            <h3> {user?.username ? `Hi ${user.username}` : 'Unauthorized User' }</h3>
         </div>
     </div>
 
