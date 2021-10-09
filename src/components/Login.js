@@ -3,46 +3,51 @@ import { useState } from 'react';
 import { useHistory } from "react-router-dom";
 import Button from './common/Button';
 import Input from './common/Input';
+import { connect } from 'react-redux';
+import { getLoggedInUser } from '../actions';
 
-const Login = () => {
+const Login = props => {
     const history = useHistory();
-    const [passError, setPassError] = useState('');
-    const [mailError, setMailError] = useState('');
-    const [submitError, setSubmitError] = useState('');
     const [fieldObj, setFieldObj] = useState({
         mail: '',
         password: '',
     });
+    const [errorObj, setErrorObj] = useState({
+        mail: '',
+        password: '',
+    });
     const fieldValidator = () => {
+        let flag = true;
+        const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
         if (!fieldObj.mail) {
-            setMailError('This Input Field is required')
-            return false;
-        } else {
-            const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-            if (!pattern.test(fieldObj.mail)) {
-                setMailError('Invalid Email Address');
-                return false;
-            }
+            setErrorObj({ ...errorObj, mail: 'This Input Field is required' });
+            flag = false;
+        } else if (!pattern.test(fieldObj.mail)) {
+            setErrorObj({ ...errorObj, mail: 'Invalid Email Address' });
+            flag = false;
         }
         if (!fieldObj.password) {
-            setPassError('This Input Field is required');
-            return false;
-
+            setErrorObj({ ...errorObj, password: 'This Input field is required' });
+            flag = false;
         }
-        return true;
+        return flag;
+    }
+    const handleChange = (e) => {
+        setFieldObj({ ...fieldObj, [e.target.name]: e.target.value });
+        if (errorObj[e.target.name]) setErrorObj({ ...errorObj, [e.target.name]: '' })
     }
     const handleLogin = () => {
         const validValue = fieldValidator();
-        console.log('validValue', validValue);
         if (validValue) {
             const cred = JSON.parse(localStorage.getItem('credentials')).find(o => o.mail === fieldObj.mail)
             if (cred) {
                 if (cred.password === fieldObj.password) {
                     console.log('User successfully loggedIn');
                     localStorage.setItem('currentUser', JSON.stringify(cred));
+                    props.onloginUserData(cred);
                     history.push("/home");
-                } else setSubmitError('Incorrect Password');
-            } else setSubmitError('User not registered please signup');
+                } else setErrorObj({ ...errorObj, password: 'Incorrect Password' });
+            } else setErrorObj({ ...errorObj, mail: 'User not registered please signup' });
         }
     };
     return <div className="formWrapper">
@@ -54,31 +59,33 @@ const Login = () => {
                     name="mail"
                     title="Email"
                     value={fieldObj.mail}
-                    customButtonClass={'inputField'}
-                    setOnChange={e => setFieldObj({...fieldObj, mail: e.target.value})}
-                    setOnClick={() => setMailError('')}
+                    setOnChange={handleChange}
                     required={true}
-                    errMsg={mailError}
+                    errMsg={errorObj.mail}
                 />
                 <Input
                     type="password"
                     name="password"
                     title="Password"
                     value={fieldObj.password}
-                    customButtonClass={'inputField'}
-                    setOnChange={e => setFieldObj({...fieldObj, password: e.target.value})}
-                    setOnClick={() => setPassError('')}
+                    setOnChange={handleChange}
                     required={true}
-                    errMsg={passError} />
+                    errMsg={errorObj.password} />
                 <Button type={'primary'}
                     customButtonClass={'submitButton'}
                     onClick={handleLogin}
                     title={'Login'}
                 />
-                {submitError && <div className="error-message">{submitError}</div>}
             </div>
         </div>
     </div>
 
 };
-export default Login;
+const mapStateToProps = (state) => {
+    console.log('state', state);
+    return state;
+}
+const mapDispatchToProps = dispatch => ({
+    onloginUserData: (cred) => dispatch(getLoggedInUser(cred))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

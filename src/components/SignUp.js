@@ -10,52 +10,56 @@ const SignUp = () => {
         password: '',
         repPassword: ''
     });
+    const [errorObj, setErrorObj] = useState({
+        mail: '',
+        username: '',
+        password: '',
+        repPassword: ''
+    });
+    const handleChange = (e) => {
+        setFieldObj({ ...fieldObj, [e.target.name]: e.target.value });
+        if (errorObj[e.target.name]) setErrorObj({ ...errorObj, [e.target.name]: '' })
+    }
     const history = useHistory();
-    const [mailError, setMailError] = useState('');
-    const [passError, setPassError] = useState('');
-    const [usernameError, setUsernameErr] = useState('');
-    const [repPassError, setRepPassErr] = useState('');
-    const [submitError, setSubmitError] = useState('');
     const fieldValidator = () => {
+        const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+        const passPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
+        const currErrorObj ={...errorObj};
+        let flag = true;
         if (!fieldObj.mail) {
-            setMailError('This Input Field is required')
-            return false;
-        } else {
-            const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-            if (!pattern.test(fieldObj.mail)) {
-                setMailError('Invalid Email Address');
-                return false;
-            }
+            currErrorObj.mail = 'This Input Field is required'
+            flag = false;
+        } else if (!emailPattern.test(fieldObj.mail)) {
+            setErrorObj({ ...errorObj, mail: 'Invalid Email Address' });
+            currErrorObj.mail = 'This Input Field is required'
+            flag = false;
         }
         if (!fieldObj.username) {
-            setUsernameErr('This field is required');
-            return false;
+            setErrorObj({ ...errorObj, username: 'This field is required' });
+            currErrorObj.mail = 'This Input Field is required'
+            flag = false;
         }
         if (!fieldObj.password) {
-            setPassError('This Input Field is required');
-            return false;
-        } else {
-            const pattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
-            if (!pattern.test(fieldObj.password)) {
-                setPassError('One numeric and special char required');
-                return false;
-            }
+            setErrorObj({ ...errorObj, password: 'This field is required' });
+            currErrorObj.mail = 'This Input Field is required'
+            flag = false;
+        } else if (!passPattern.test(fieldObj.password)) {
+            setErrorObj({ ...errorObj, password: 'One numeric and special char required' });
+            currErrorObj.mail = 'This Input Field is required'
+            flag = false;
         }
         if (!fieldObj.repPassword) {
-            setRepPassErr('This Input Field is required');
-            return false;
-        } else {
-            const pattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
-            if (!pattern.test(fieldObj.password)) {
-                setRepPassErr('One numeric and special char required');
-                return false;
-            }
+            setErrorObj({ ...errorObj, repPassword: 'This field is required' });
+            currErrorObj.mail = 'This Input Field is required'
+            flag = false;
         }
         if (fieldObj.repPassword !== fieldObj.password) {
-            setRepPassErr('Password Mismatch');
-            return false;
+            setErrorObj({ ...errorObj, repPassword: 'Password Mismatch' });
+            currErrorObj.mail = 'This Input Field is required'
+            flag = false;
         }
-        return true;
+        setErrorObj(currErrorObj);
+        return flag;
     }
 
     const handleSignUp = () => {
@@ -63,7 +67,7 @@ const SignUp = () => {
         const validValue = fieldValidator();
         if (validValue) {
             let storedData = localStorage.getItem('credentials');
-            if(storedData) {
+            if (storedData) {
                 storedData = JSON.parse(storedData);
             }
             const cred = storedData.find(o => o.mail === fieldObj.mail)
@@ -74,7 +78,7 @@ const SignUp = () => {
                 localStorage.setItem('currentUser', JSON.stringify(fieldObj));
                 history.push("/home");
             }
-            else setSubmitError('User already registered');
+            else setErrorObj({ ...errorObj, mail: 'User already registered - please Login' });
         }
 
     }
@@ -82,12 +86,47 @@ const SignUp = () => {
         <div>
             <h3>Signup Here</h3>
             <div className="container">
-                <Input type="email" name="mail" title="Email" value={fieldObj.mail} customButtonClass={'inputField'} setOnChange={e => setFieldObj({...fieldObj, mail: e.target.value})} required={true} errMsg={mailError} />
-                <Input type="text" name="username" title="Username" value={fieldObj.username} customButtonClass={'inputField'} setOnChange={e => setFieldObj({...fieldObj, username: e.target.value})} required={true} errMsg={usernameError} />
-                <Input type="password" name="password" title="Password" value={fieldObj.password} customButtonClass={'inputField'} setOnChange={e => setFieldObj({...fieldObj, password: e.target.value})} required={true} errMsg={passError} />
-                <Input type="password" name="repPassword" title="Repeat Password" value={fieldObj.repPassword} customButtonClass={'inputField'} setOnChange={e => setFieldObj({...fieldObj, repPassword: e.target.value})} required={true} errMsg={repPassError} />
-                <Button type={'primary'} customButtonClass={'submitButton'} onClick={handleSignUp} title={'Sign Up'} />
-                {submitError && <div className="error-message">{submitError}</div>}
+                <Input type="email"
+                    name="mail"
+                    title="Email"
+                    value={fieldObj.mail}
+                    setOnChange={handleChange}
+                    required={true}
+                    errMsg={errorObj.mail}
+                />
+                <Input
+                    type="text"
+                    name="username"
+                    title="Username"
+                    value={fieldObj.username}
+                    setOnChange={handleChange}
+                    required={true}
+                    errMsg={errorObj.username}
+                />
+                <Input
+                    type="password"
+                    name="password"
+                    title="Password"
+                    value={fieldObj.password}
+                    setOnChange={handleChange}
+                    required={true}
+                    errMsg={errorObj.password}
+                />
+                <Input
+                    type="password"
+                    name="repPassword"
+                    title="Repeat Password"
+                    value={fieldObj.repPassword}
+                    setOnChange={handleChange}
+                    required={true}
+                    errMsg={errorObj.repPassword}
+                />
+                <Button
+                    type={'primary'}
+                    customButtonClass={'submitButton'}
+                    onClick={handleSignUp}
+                    title={'Sign Up'}
+                />
             </div>
         </div>
     </div>

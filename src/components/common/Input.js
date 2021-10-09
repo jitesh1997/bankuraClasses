@@ -9,9 +9,8 @@ const Input = ({
     value,
     disabled,
     required,
-    customButtonClass,
+    customInputClass,
     setOnChange,
-    setOnClick,
     errMsg
 }) => {
     return (
@@ -21,13 +20,13 @@ const Input = ({
                 name={name}
                 placeholder={title}
                 className={cx(
+                    'inputField',
                     errMsg && 'errorField',
-                    customButtonClass
+                    customInputClass
                 )}
                 disabled={disabled}
                 value={value}
                 onChange={setOnChange}
-                onClick={setOnClick}
                 required={required}>
             </input>
             {errMsg && <div className="error-message">{errMsg}</div>}
