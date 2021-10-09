@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
+import { AddNewUser, getLoggedInUser } from '../actions';
 import Button from './common/Button';
 import Input from './common/Input';
 
-const SignUp = () => {
+const SignUp = ({ onNewSignUp, onLoginUserData, users }) => {
     const [fieldObj, setFieldObj] = useState({
         mail: '',
         username: '',
@@ -30,32 +32,26 @@ const SignUp = () => {
             currErrorObj.mail = 'This Input Field is required'
             flag = false;
         } else if (!emailPattern.test(fieldObj.mail)) {
-            setErrorObj({ ...errorObj, mail: 'Invalid Email Address' });
-            currErrorObj.mail = 'This Input Field is required'
+            currErrorObj.mail = 'Invalid Email Address'
             flag = false;
         }
         if (!fieldObj.username) {
-            setErrorObj({ ...errorObj, username: 'This field is required' });
-            currErrorObj.mail = 'This Input Field is required'
+            currErrorObj.username = 'This Input Field is required'
             flag = false;
         }
         if (!fieldObj.password) {
-            setErrorObj({ ...errorObj, password: 'This field is required' });
-            currErrorObj.mail = 'This Input Field is required'
+            currErrorObj.password = 'This Input Field is required'
             flag = false;
         } else if (!passPattern.test(fieldObj.password)) {
-            setErrorObj({ ...errorObj, password: 'One numeric and special char required' });
-            currErrorObj.mail = 'This Input Field is required'
+            currErrorObj.password = 'One numeric and special char required'
             flag = false;
         }
         if (!fieldObj.repPassword) {
-            setErrorObj({ ...errorObj, repPassword: 'This field is required' });
-            currErrorObj.mail = 'This Input Field is required'
+            currErrorObj.repPassword = 'This Input Field is required'
             flag = false;
         }
         if (fieldObj.repPassword !== fieldObj.password) {
-            setErrorObj({ ...errorObj, repPassword: 'Password Mismatch' });
-            currErrorObj.mail = 'This Input Field is required'
+            currErrorObj.repPassword = 'This Input Field is required'
             flag = false;
         }
         setErrorObj(currErrorObj);
@@ -63,19 +59,17 @@ const SignUp = () => {
     }
 
     const handleSignUp = () => {
-        console.log('fieeldObj', fieldObj);
         const validValue = fieldValidator();
         if (validValue) {
-            let storedData = localStorage.getItem('credentials');
-            if (storedData) {
-                storedData = JSON.parse(storedData);
-            }
-            const cred = storedData.find(o => o.mail === fieldObj.mail)
+            console.log('testValidSignUp', users)
+            const cred = users.find(o => o.mail === fieldObj.mail)
             if (!cred) {
-                let credentials = storedData || [];
+                let credentials = users || [];
                 credentials.push(fieldObj);
                 localStorage.setItem("credentials", JSON.stringify(credentials));
+                onNewSignUp(fieldObj);
                 localStorage.setItem('currentUser', JSON.stringify(fieldObj));
+                onLoginUserData(cred);
                 history.push("/home");
             }
             else setErrorObj({ ...errorObj, mail: 'User already registered - please Login' });
@@ -132,4 +126,12 @@ const SignUp = () => {
     </div>
 
 };
-export default SignUp;
+const mapStateToProps = (state) => {
+    console.log('test_SignUp', state)
+    return {users: state.users};
+};
+const mapDispatchToProps = dispatch => ({
+    onNewSignUp: (cred) => dispatch(AddNewUser(cred)),
+    onLoginUserData: (cred) => dispatch(getLoggedInUser(cred)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

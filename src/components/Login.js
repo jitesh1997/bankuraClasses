@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useHistory } from "react-router-dom";
 import Button from './common/Button';
 import Input from './common/Input';
 import { connect } from 'react-redux';
-import { getLoggedInUser } from '../actions';
+import { getLoggedInUser, getUserDataList } from '../actions';
 
-const Login = props => {
+const Login = ({onLoadAllData, onLoginUserData, users, onNewSignUp}) => {
     const history = useHistory();
     const [fieldObj, setFieldObj] = useState({
         mail: '',
@@ -16,20 +16,30 @@ const Login = props => {
         mail: '',
         password: '',
     });
+    useEffect(() => {
+        const cred = localStorage.getItem('currentUser')
+        if(cred) {
+            onLoginUserData(JSON.parse(cred));
+            history.push("/home");
+        } else onLoadAllData(JSON.parse(localStorage.getItem('credentials')));
+    },[]);
+
     const fieldValidator = () => {
         let flag = true;
+        const tempErrorObj = {...errorObj};
         const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
         if (!fieldObj.mail) {
-            setErrorObj({ ...errorObj, mail: 'This Input Field is required' });
+            tempErrorObj['mail'] = 'This Input Field is required'
             flag = false;
         } else if (!pattern.test(fieldObj.mail)) {
-            setErrorObj({ ...errorObj, mail: 'Invalid Email Address' });
+            tempErrorObj['mail'] = 'Invalid Email Address'
             flag = false;
         }
         if (!fieldObj.password) {
-            setErrorObj({ ...errorObj, password: 'This Input field is required' });
+            tempErrorObj['password'] = 'This Input field is required'
             flag = false;
         }
+        setErrorObj(tempErrorObj);
         return flag;
     }
     const handleChange = (e) => {
@@ -38,13 +48,14 @@ const Login = props => {
     }
     const handleLogin = () => {
         const validValue = fieldValidator();
+        console.log('errorObj Is', errorObj);
         if (validValue) {
-            const cred = JSON.parse(localStorage.getItem('credentials')).find(o => o.mail === fieldObj.mail)
+            const cred = users.find(o => o.mail === fieldObj.mail)
             if (cred) {
                 if (cred.password === fieldObj.password) {
                     console.log('User successfully loggedIn');
                     localStorage.setItem('currentUser', JSON.stringify(cred));
-                    props.onloginUserData(cred);
+                    onLoginUserData(cred);
                     history.push("/home");
                 } else setErrorObj({ ...errorObj, password: 'Incorrect Password' });
             } else setErrorObj({ ...errorObj, mail: 'User not registered please signup' });
@@ -82,10 +93,11 @@ const Login = props => {
 
 };
 const mapStateToProps = (state) => {
-    console.log('state', state);
-    return state;
-}
+    console.log('test_Login', state)
+    return {users: state.users};
+};
 const mapDispatchToProps = dispatch => ({
-    onloginUserData: (cred) => dispatch(getLoggedInUser(cred))
+    onLoginUserData: (cred) => dispatch(getLoggedInUser(cred)),
+    onLoadAllData: (data) => dispatch(getUserDataList(data))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

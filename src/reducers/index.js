@@ -2,6 +2,8 @@ import {combineReducers} from 'redux';
 const usersListReducer = (allUsers=[], action) => {
     if(action.type === 'USERS_LIST') {
         return action.payload
+    } else if(action.type === 'ADD_USER') {
+        return [...allUsers, action.payload]
     }
     return allUsers;
 }
